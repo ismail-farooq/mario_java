@@ -1,5 +1,6 @@
 package com.ismail.mario.Sprites;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -76,10 +77,10 @@ public class Goomba extends Enemy{
 		//head
 		PolygonShape head = new PolygonShape();
 		Vector2[] vertice = new Vector2[4];
-		vertice[0] = new Vector2(-5, 8).scl(1/Mario.PPM);
-		vertice[1] = new Vector2(5, 8).scl(1/Mario.PPM);
-		vertice[2] = new Vector2(-3, 3).scl(1/Mario.PPM);
-		vertice[3] = new Vector2(3, 3).scl(1/Mario.PPM);
+		 vertice[0] = new Vector2(-7, 12).scl(1 / Mario.PPM);  // Increase the x and y values to enlarge the head
+		    vertice[1] = new Vector2(7, 12).scl(1 / Mario.PPM);
+		    vertice[2] = new Vector2(-7, 4).scl(1 / Mario.PPM);   // These two values control the bottom of the head fixture
+		    vertice[3] = new Vector2(7, 4).scl(1 / Mario.PPM);
 		head.set(vertice);
 		
 		fdef.shape = head;
@@ -97,8 +98,17 @@ public class Goomba extends Enemy{
 	}
 	
 	@Override
-	public void hitOnHead() {
+	public void hitOnHead(MarioSprite mario) {
 		setToDestroy = true;
+		Mario.manager.get("audio/sounds/sniper.wav", Sound.class).play(0.5f);
 	}
 
+	@Override
+	public void onEnemyHit(Enemy enemy) {
+		if (enemy instanceof Turtle && ((Turtle) enemy).currentState == Turtle.State.MOVING_SHELL) {
+			setToDestroy = true;
+		} else {
+			reverseVelocity(true, false);
+		}
+	}
 }
